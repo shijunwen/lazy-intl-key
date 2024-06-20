@@ -18,7 +18,7 @@
     "commands": [
       {
         "command": "i18nEN",
-        "title": "i18nEN"
+        "title": "生成国际化文件"
       }
     ],
     "menus": {
@@ -58,6 +58,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
+    "js-md5": "^0.8.3",
     "node-fetch": "^3.2.3"
   }
 }
