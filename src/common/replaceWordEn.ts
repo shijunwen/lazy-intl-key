@@ -11,7 +11,6 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import { ObjectItem, getTranslationData } from "./utils";
 // 定义接口来匹配 responseData 的结构
-
 const writeFile = (
   zhPath: string,
   zhJSON: string,
@@ -31,7 +30,9 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
   ) {
     return;
   }
-
+  // 获取用户的配置信息
+  const config = vscode.workspace.getConfiguration();
+  const i18nPrefix = config.get("in18n.prefix") || "i18n";
   // 获取当前文件的 URI
   const fileUri = vscode.window.activeTextEditor.document.uri;
   // 提取文件所在的目录路径
@@ -72,12 +73,12 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
     const keyWords = words.slice(0, 3);
 
     let key = keyWords.join("_");
-    if (zhJSON[`I18N_${key}`]) {
+    if (zhJSON[`${i18nPrefix}_${key}`]) {
       key = key + "_" + index;
     }
 
-    zhJSON[`I18N_${key}`] = src;
-    enJSON[`I18N_${key}`] = dst;
+    zhJSON[`${i18nPrefix}_${key}`] = src;
+    enJSON[`${i18nPrefix}_${key}`] = dst;
   });
   const zhPath = `${fileDir}/zh_CN.json`;
   const enPath = `${fileDir}/en_US.json`;
