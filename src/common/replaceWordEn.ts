@@ -41,7 +41,8 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
   const currentlyOpenTabfilePath =
     vscode.window.activeTextEditor.document.fileName;
   const fileInfo = fs.readFileSync(currentlyOpenTabfilePath, "utf8");
-  const chineseWords: any = fileInfo.match(/[\u4e00-\u9fa5]+/g) || [];
+  const chineseWords: any =
+    fileInfo.match(/(?<!\/\/.*?|\/\*(?:(?!\*\/)[\s\S])*?)([\u4e00-\u9fa5]+)/g) || [];
   const translationDataSource = await getTranslationData(
     chineseWords.join("\n")
   );
