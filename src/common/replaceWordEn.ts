@@ -10,16 +10,6 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import { ObjectItem, getTranslationData } from "./utils";
-// 定义接口来匹配 responseData 的结构
-const writeFile = (
-  zhPath: string,
-  zhJSON: string,
-  enPath: string,
-  enJSON: string
-) => {
-  fs.writeFileSync(zhPath, JSON.stringify(zhJSON, null, 2));
-  fs.writeFileSync(enPath, JSON.stringify(enJSON, null, 2));
-};
 
 // 国际化英文
 export default vscode.commands.registerCommand("i18nEN", async () => {
@@ -42,7 +32,9 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
     vscode.window.activeTextEditor.document.fileName;
   const fileInfo = fs.readFileSync(currentlyOpenTabfilePath, "utf8");
   const chineseWords: any =
-    fileInfo.match(/(?<!\/\/.*?|\/\*(?:(?!\*\/)[\s\S])*?)([\u4e00-\u9fa5]+)/g) || [];
+    fileInfo.match(
+      /(?<!\/\/.*?|\/\*(?:(?!\*\/)[\s\S])*?)([\u4e00-\u9fa5]+)/g
+    ) || [];
   const translationDataSource = await getTranslationData(
     chineseWords.join("\n")
   );
@@ -81,7 +73,5 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
     zhJSON[`${i18nPrefix}_${key}`] = src;
     enJSON[`${i18nPrefix}_${key}`] = dst;
   });
-  const zhPath = `${fileDir}/zh_CN.json`;
-  const enPath = `${fileDir}/en_US.json`;
-  writeFile(zhPath, zhJSON, enPath, enJSON);
+  vscode.env.clipboard.writeText(JSON.stringify({ zhJSON, enJSON }));
 });
