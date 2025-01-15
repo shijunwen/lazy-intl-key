@@ -2,7 +2,7 @@
   "name": "lazy-intl-key",
   "displayName": "lazy_intl_key",
   "description": "用于替换国际化",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "publisher": "junwenzz",
   "engines": {
     "vscode": "^1.66.0"
