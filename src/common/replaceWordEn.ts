@@ -23,6 +23,7 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
   // 获取用户的配置信息
   const config = vscode.workspace.getConfiguration();
   const i18nPrefix = config.get("in18n.prefix") || "i18n";
+  const i18nFunc = config.get("in18n.func") || "getIntl";
   // 获取当前文件的 URI
   const fileUri = vscode.window.activeTextEditor.document.uri;
   // 提取文件所在的目录路径
@@ -33,7 +34,7 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
   const fileInfo = fs.readFileSync(currentlyOpenTabfilePath, "utf8");
   const chineseWords: any =
     fileInfo.match(
-      /(?<!\/\/.*?|\/\*(?:(?!\*\/)[\s\S])*?)([\u4e00-\u9fa5]+)/g
+      /(?<!\/\/.*?|\/\*(?:(?!\*\/)[\s\S])*?)([\u4e00-\u9fa5]+[\u4e00-\u9fa5\d+\-*/，。！？、\s\r\n]*[\u4e00-\u9fa5]+)/g
     ) || [];
   const translationDataSource = await getTranslationData(
     chineseWords.join("\n")
@@ -57,6 +58,7 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
 
   const zhJSON: any = {};
   const enJSON: any = {};
+  const transformJSON: any = {};
   uniqueArray?.forEach(({ src, dst }, index) => {
     const formattedText = dst
       .replace(/[^\w\s]/gi, "")
@@ -72,6 +74,9 @@ export default vscode.commands.registerCommand("i18nEN", async () => {
 
     zhJSON[`${i18nPrefix}_${key}`] = src;
     enJSON[`${i18nPrefix}_${key}`] = dst;
+    transformJSON[`${src}`] = `\'{${i18nFunc}(\'${i18nPrefix}_${key}\')}\'`;
   });
-  vscode.env.clipboard.writeText(JSON.stringify({ zhJSON, enJSON }));
+  vscode.env.clipboard.writeText(
+    JSON.stringify({ transformJSON, zhJSON, enJSON })
+  );
 });
